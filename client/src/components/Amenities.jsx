@@ -16,7 +16,7 @@ export default function Amenities() {
           ))
         )}
         {images.map((src, i) => (
-          <img key={i} src={src} alt={alts[i] || 'Galería TPH'} loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-2xl object-cover" />
+          <img key={i} src={src} alt={alts[i] || 'Galería TPH'} loading="lazy" decoding="async" sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full rounded-2xl object-cover" />
         ))}
       </div>
       <div className="mt-6">
