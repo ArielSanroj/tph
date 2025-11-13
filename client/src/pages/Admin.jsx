@@ -11,9 +11,20 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+  // En producción, VITE_API_BASE debe estar configurado en Vercel
+  // En desarrollo local, usar: VITE_API_BASE=http://localhost:4000
+  const API_BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http://localhost:4000' : null);
+  
+  if (!API_BASE && !import.meta.env.DEV) {
+    console.error('VITE_API_BASE no está configurado. Por favor configura la variable de entorno en Vercel.');
+  }
 
   const fetchReservations = async () => {
+    if (!API_BASE) {
+      setError('API no configurada. Por favor contacta al administrador.');
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/api/admin/reservations`, {
@@ -37,6 +48,9 @@ export default function Admin() {
   };
 
   const fetchLeads = async () => {
+    if (!API_BASE) {
+      return;
+    }
     try {
       const data = await getLeads(token);
       setLeads(data);
@@ -55,6 +69,10 @@ export default function Admin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!API_BASE) {
+      setError('API no configurada. Por favor contacta al administrador.');
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/api/admin/login`, {
