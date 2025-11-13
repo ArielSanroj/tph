@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Services from './components/Services';
 import WhyStay from './components/WhyStay';
 import Amenities from './components/Amenities';
+import Videos from './components/Videos';
 import Reviews from './components/Reviews';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
@@ -28,6 +29,7 @@ export default function App() {
       <ReservationForm ref={reserveRef} />
       <CTA onReserveClick={scrollToReserve} />
       <Reviews />
+      <Videos />
       <Amenities />
       <Footer />
       <MobileCTA onReserveClick={scrollToReserve} onLeadClick={() => setLeadOpen(true)} />
