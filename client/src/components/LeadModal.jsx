@@ -18,7 +18,7 @@ export default function LeadModal({ open, onClose }) {
       setStatus({ type: 'success', message: '¡Gracias! Te contactaremos pronto.' });
       setForm({ first_name: '', last_name: '', phone: '', email: '', country: '' });
     } catch (err) {
-      setStatus({ type: 'error', message: err?.error || 'No se pudo enviar. Intenta nuevamente.' });
+      setStatus({ type: 'error', message: err?.error || err?.message || 'No se pudo enviar. Intenta nuevamente.' });
     }
   };
 

@@ -1,11 +1,23 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+// En producción, VITE_API_BASE debe estar configurado en Vercel
+// En desarrollo local, usar: VITE_API_BASE=http://localhost:4000
+const API_BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http://localhost:4000' : null);
+
+if (!API_BASE && !import.meta.env.DEV) {
+  console.error('VITE_API_BASE no está configurado. Por favor configura la variable de entorno en Vercel.');
+}
 
 export const checkAvailability = async (start, end) => {
+  if (!API_BASE) {
+    throw new Error('API no configurada. Por favor contacta al administrador.');
+  }
   const r = await fetch(`${API_BASE}/api/reservations/availability?start=${start}&end=${end}`);
   return r.json();
 };
 
 export const createReservation = async (payload) => {
+  if (!API_BASE) {
+    throw new Error('API no configurada. Por favor contacta al administrador.');
+  }
   const r = await fetch(`${API_BASE}/api/reservations`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
   });
@@ -13,6 +25,9 @@ export const createReservation = async (payload) => {
 };
 
 export const createLead = async (payload) => {
+  if (!API_BASE) {
+    throw new Error('API no configurada. Por favor contacta al administrador.');
+  }
   const r = await fetch(`${API_BASE}/api/leads`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
   });
