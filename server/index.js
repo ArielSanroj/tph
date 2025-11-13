@@ -109,6 +109,12 @@ app.get('/api/admin/reservations', requireAuth, (_req, res) => {
   res.json(rows);
 });
 
+// Admin: listar leads (protegido)
+app.get('/api/admin/leads', requireAuth, (_req, res) => {
+  const rows = db.prepare('SELECT * FROM leads ORDER BY created_at DESC').all();
+  res.json(rows);
+});
+
 app.listen(PORT, () => {
   console.log(`API running on http://localhost:${PORT}`);
 });

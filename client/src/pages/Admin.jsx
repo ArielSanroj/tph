@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import AdminCalendar from '../components/AdminCalendar.jsx';
+import { getLeads } from '../api';
 
 export default function Admin() {
   const [reservations, setReservations] = useState([]);
+  const [leads, setLeads] = useState([]);
   const [email, setEmail] = useState(localStorage.getItem('adminEmail') || '');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
@@ -34,9 +36,22 @@ export default function Admin() {
     }
   };
 
+  const fetchLeads = async () => {
+    try {
+      const data = await getLeads(token);
+      setLeads(data);
+    } catch (err) {
+      console.error('Error al obtener leads:', err);
+      setLeads([]);
+    }
+  };
+
   useEffect(() => {
-    if (token) fetchReservations();
-  }, []);
+    if (token) {
+      fetchReservations();
+      fetchLeads();
+    }
+  }, [token]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -55,6 +70,7 @@ export default function Admin() {
       setPassword('');
       setError('');
       fetchReservations();
+      fetchLeads();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -95,31 +111,66 @@ export default function Admin() {
               <AdminCalendar reservations={reservations} />
             </div>
             <div>
-              <h2 className="text-xl font-semibold mb-3">Listado</h2>
-          <table className="w-full border-collapse bg-white shadow-sm rounded-xl overflow-hidden">
-            <thead className="bg-accent text-white">
-              <tr>
-                <th className="p-2 text-left">Nombre</th>
-                <th className="p-2 text-left">Email</th>
-                <th className="p-2 text-left">Fechas</th>
-                <th className="p-2 text-left">Huéspedes</th>
-                <th className="p-2 text-left">País</th>
-                <th className="p-2 text-left">Notas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.map(r => (
-                <tr key={r.id} className="border-t">
-                  <td className="p-2">{r.first_name} {r.last_name}</td>
-                  <td className="p-2">{r.email}</td>
-                  <td className="p-2">{r.start_date} → {r.end_date}</td>
-                  <td className="p-2">{r.guests}</td>
-                  <td className="p-2">{r.country}</td>
-                  <td className="p-2 text-sm text-gray-600">{r.notes || '-'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <h2 className="text-xl font-semibold mb-3">Reservas</h2>
+              <table className="w-full border-collapse bg-white shadow-sm rounded-xl overflow-hidden mb-8">
+                <thead className="bg-accent text-white">
+                  <tr>
+                    <th className="p-2 text-left">Nombre</th>
+                    <th className="p-2 text-left">Email</th>
+                    <th className="p-2 text-left">Fechas</th>
+                    <th className="p-2 text-left">Huéspedes</th>
+                    <th className="p-2 text-left">País</th>
+                    <th className="p-2 text-left">Notas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reservations.length === 0 ? (
+                    <tr><td colSpan="6" className="p-4 text-center text-gray-500">No hay reservas</td></tr>
+                  ) : (
+                    reservations.map(r => (
+                      <tr key={r.id} className="border-t">
+                        <td className="p-2">{r.first_name} {r.last_name}</td>
+                        <td className="p-2">{r.email}</td>
+                        <td className="p-2">{r.start_date} → {r.end_date}</td>
+                        <td className="p-2">{r.guests}</td>
+                        <td className="p-2">{r.country}</td>
+                        <td className="p-2 text-sm text-gray-600">{r.notes || '-'}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold mb-3">Leads - Déjanos tus datos</h2>
+              <table className="w-full border-collapse bg-white shadow-sm rounded-xl overflow-hidden">
+                <thead className="bg-accent text-white">
+                  <tr>
+                    <th className="p-2 text-left">Nombre</th>
+                    <th className="p-2 text-left">Apellido</th>
+                    <th className="p-2 text-left">Email</th>
+                    <th className="p-2 text-left">Teléfono</th>
+                    <th className="p-2 text-left">País</th>
+                    <th className="p-2 text-left">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leads.length === 0 ? (
+                    <tr><td colSpan="6" className="p-4 text-center text-gray-500">No hay leads registrados</td></tr>
+                  ) : (
+                    leads.map(lead => (
+                      <tr key={lead.id} className="border-t">
+                        <td className="p-2">{lead.first_name}</td>
+                        <td className="p-2">{lead.last_name}</td>
+                        <td className="p-2">{lead.email}</td>
+                        <td className="p-2">{lead.phone || '-'}</td>
+                        <td className="p-2">{lead.country}</td>
+                        <td className="p-2 text-sm text-gray-600">{new Date(lead.created_at).toLocaleDateString('es-ES')}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

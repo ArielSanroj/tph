@@ -35,6 +35,9 @@ export const createLead = async (payload) => {
 };
 
 export const adminLogin = async (email, password) => {
+  if (!API_BASE) {
+    throw new Error('API no configurada. Por favor contacta al administrador.');
+  }
   const r = await fetch(`${API_BASE}/api/admin/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -43,6 +46,17 @@ export const adminLogin = async (email, password) => {
   const data = await r.json();
   if (!r.ok) throw new Error(data?.error || 'No se pudo iniciar sesión');
   return data; // { token }
+};
+
+export const getLeads = async (token) => {
+  if (!API_BASE) {
+    throw new Error('API no configurada. Por favor contacta al administrador.');
+  }
+  const r = await fetch(`${API_BASE}/api/admin/leads`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!r.ok) throw new Error('Error al obtener leads');
+  return r.json();
 };
 
 
