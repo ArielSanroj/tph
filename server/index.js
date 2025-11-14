@@ -7,12 +7,28 @@ import db from './db.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+// CORS: permitir Vercel y localhost
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+const allowedOrigins = CORS_ORIGIN === '*' 
+  ? ['https://tph-omega.vercel.app', 'https://tph-git-main-arielsanrojs-projects.vercel.app', 'http://localhost:5173']
+  : CORS_ORIGIN.split(',').map(o => o.trim());
+
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@peacockhouse.local';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
 
-app.use(cors({ origin: CORS_ORIGIN }));
+app.use(cors({ 
+  origin: (origin, callback) => {
+    // Permitir requests sin origin (mobile apps, Postman, etc)
+    if (!origin) return callback(null, true);
+    if (CORS_ORIGIN === '*' || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Utils
