@@ -2,8 +2,16 @@
 // En desarrollo local, usar: VITE_API_BASE=http://localhost:4000
 const API_BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http://localhost:4000' : null);
 
+// Debug: verificar variable de entorno (remover en producción)
+if (typeof window !== 'undefined') {
+  console.log('🔍 Debug - VITE_API_BASE:', import.meta.env.VITE_API_BASE);
+  console.log('🔍 Debug - API_BASE:', API_BASE);
+  console.log('🔍 Debug - DEV mode:', import.meta.env.DEV);
+  console.log('🔍 Debug - MODE:', import.meta.env.MODE);
+}
+
 if (!API_BASE && !import.meta.env.DEV) {
-  console.error('VITE_API_BASE no está configurado. Por favor configura la variable de entorno en Vercel.');
+  console.error('❌ VITE_API_BASE no está configurado. Por favor configura la variable de entorno en Vercel.');
 }
 
 export const checkAvailability = async (start, end) => {
